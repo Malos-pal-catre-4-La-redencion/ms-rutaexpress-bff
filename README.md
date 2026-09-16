@@ -2,7 +2,7 @@
 
 BFF de RutaExpress. Valida el JWT emitido por Azure AD (issuer + firma) y
 autoriza cada endpoint según el claim `roles` del token, usando
-`@PreAuthorize` de Spring Security.
+`@PreAuthorize` de Spring Security. AAAAAAAAAAAAAAAAAAAAAAA
 
 ## Requisitos
 
