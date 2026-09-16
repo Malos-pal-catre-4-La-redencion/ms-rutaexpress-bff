@@ -24,7 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
- * Azure AD entrega los roles del usuario en el claim "roles" (no en "scope",
+ * Azure AD entrega los roles del usuario en el claim "roles" (no en "scope",AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
  * que es el default de Spring Security). Por eso el JwtAuthenticationConverter
  * se reconfigura explícitamente para leer ese claim y transformarlo en
  * autoridades con prefijo ROLE_, que es lo que @PreAuthorize("hasRole(...)")

@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 /**
- * Spring Security no valida el claim "aud" por defecto cuando el resource
+ * Spring Security no valida el claim "aud" por defecto cuando el resourceAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
  * server se configura solo con issuer-uri — solo revisa firma, issuer y
  * expiración. Este validador cierra ese hueco: rechaza cualquier JWT cuyo
  * audience no sea exactamente el de esta API (por ejemplo, un id_token, que
