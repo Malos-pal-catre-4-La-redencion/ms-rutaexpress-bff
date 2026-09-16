@@ -1,0 +1,32 @@
+# ============================================================================
+# CONFIGURACIÓN — sobreescribible por variables de entorno
+#   AZURE_TENANT_ID      Directory (tenant) ID de la app RutaExpress en Azure AD
+#   AZURE_CLIENT_ID      Application (client) ID de la app RutaExpress
+#   CORS_ALLOWED_ORIGIN  Origen permitido para llamar al BFF (el frontend Angular)
+#   SERVER_PORT          Puerto donde corre este servicio
+# Los valores por defecto de abajo son los de este proyecto — se puede correr
+# tal cual en local sin exportar nada. En EC2, sobreescribe con -D o con un .env.
+# ============================================================================
+
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: ms-rutaexpress-bff
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID:4a684343-6276-4c46-9913-5450f4672cbe}/v2.0
+
+rutaexpress:
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:4200}
+  azure:
+    client-id: ${AZURE_CLIENT_ID:b0361a22-65c8-4c6c-ac3a-767662d4a975}
+
+logging:
+  level:
+    org.springframework.security: INFO
+    com.rutaexpress: DEBUG
