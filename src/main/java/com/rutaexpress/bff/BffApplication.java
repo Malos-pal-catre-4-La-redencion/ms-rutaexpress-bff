@@ -21,13 +21,17 @@ public class BffApplication {
     CommandLineRunner startupBanner(
             @Value("${server.port}") String port,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri,
-            @Value("${rutaexpress.cors.allowed-origin}") String allowedOrigin) {
+            @Value("${rutaexpress.cors.allowed-origin}") String allowedOrigin,
+            @Value("${rutaexpress.downstream.shipments-url}") String shipmentsUrl,
+            @Value("${rutaexpress.downstream.catalog-url}") String catalogUrl) {
         return args -> {
             log.info("🚀 ms-rutaexpress-bff arriba en el puerto {}", port);
             log.info("🔐 Validando JWT contra issuer: {}", issuerUri);
             log.info("🌐 CORS habilitado para: {}", allowedOrigin);
-            log.info("✅ Endpoints: /api/bff/me · /api/bff/ping · /api/bff/admin/ping · "
-                    + "/api/bff/despachador/ping · /api/bff/cliente/ping · /api/bff/audit/ping");
+            log.info("🚚 Reenviando envíos hacia: {}", shipmentsUrl);
+            log.info("🗂️ Reenviando catálogo hacia: {}", catalogUrl);
+            log.info("✅ Endpoints: /api/bff/me · /api/bff/envios · /api/bff/servicios · /api/bff/vehiculos "
+                    + "(+ /api/bff/ping y variantes por rol)");
         };
     }
 }

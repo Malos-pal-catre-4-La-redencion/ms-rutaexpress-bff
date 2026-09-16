@@ -2,7 +2,7 @@
 
 BFF de RutaExpress. Valida el JWT emitido por Azure AD (issuer + firma) y
 autoriza cada endpoint según el claim `roles` del token, usando
-`@PreAuthorize` de Spring Security. AAAAAAAAAAAAAAAAAAAAAAA
+`@PreAuthorize` de Spring Security.
 
 ## Requisitos
 
@@ -53,6 +53,36 @@ Repite con un token de cada rol (Admin, Despachador, Cliente, Auditor) para
 confirmar que cada uno solo entra a lo que le corresponde — eso es
 exactamente lo que pide el punto de "BFF valida el token y autoriza por rol"
 de la rúbrica EP1.
+
+## Nuevo: proxy hacia shipments y catalog
+
+El BFF ahora reenvía hacia los otros dos microservicios. Para probarlo
+completo necesitas los 3 corriendo a la vez:
+
+```bash
+# terminal 1
+cd ms-rutaexpress-shipments && mvn spring-boot:run -Dspring-boot.run.profiles=local
+# terminal 2
+cd ms-rutaexpress-catalog && mvn spring-boot:run -Dspring-boot.run.profiles=local
+# terminal 3
+cd ms-rutaexpress-bff && mvn spring-boot:run
+```
+
+Con un token de `admin` o `despachador`:
+
+```powershell
+# Crear un envío a través del BFF (no directo a shipments)
+curl.exe -i -X POST http://localhost:8081/api/bff/envios `
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" `
+  -d '{\"remitente\":\"Tienda RutaExpress\",\"destinatario\":\"Juan Pérez\",\"direccionDestino\":\"Av. Siempre Viva 123\"}'
+
+# Ver el catálogo
+curl.exe -H "Authorization: Bearer $TOKEN" http://localhost:8081/api/bff/servicios
+```
+
+Con un token de `cliente`, probar `POST /api/bff/servicios` debería dar
+**403** (solo Admin puede editar el catálogo) — esa es la prueba de que las
+reglas de rol están donde corresponde: en el BFF, no en cada microservicio.
 
 ## Pruebas automatizadas
 

@@ -4,6 +4,8 @@
 #   AZURE_CLIENT_ID      Application (client) ID de la app RutaExpress
 #   CORS_ALLOWED_ORIGIN  Origen permitido para llamar al BFF (el frontend Angular)
 #   SERVER_PORT          Puerto donde corre este servicio
+#   SHIPMENTS_URL        URL base de ms-rutaexpress-shipments
+#   CATALOG_URL          URL base de ms-rutaexpress-catalog
 # Los valores por defecto de abajo son los de este proyecto — se puede correr
 # tal cual en local sin exportar nada. En EC2, sobreescribe con -D o con un .env.
 # ============================================================================
@@ -25,6 +27,9 @@ rutaexpress:
     allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:4200}
   azure:
     client-id: ${AZURE_CLIENT_ID:b0361a22-65c8-4c6c-ac3a-767662d4a975}
+  downstream:
+    shipments-url: ${SHIPMENTS_URL:http://localhost:8082}
+    catalog-url: ${CATALOG_URL:http://localhost:8083}
 
 logging:
   level:
