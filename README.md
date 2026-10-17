@@ -74,7 +74,7 @@ Con un token de `admin` o `despachador`:
 # Crear un envío a través del BFF (no directo a shipments)
 curl.exe -i -X POST http://localhost:8081/api/bff/envios `
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" `
-  -d '{\"remitente\":\"Tienda RutaExpress\",\"destinatario\":\"Juan Pérez\",\"direccionDestino\":\"Av. Siempre Viva 123\"}'
+  -d '{\"remitente\":\"Tienda RutaExpress\",\"destinatario\":\"Juan Pérez\",\"direccionDestino\":\"Av. Siempre Viva 123\",\"pesoKg\":12.5}'
 
 # Ver el catálogo
 curl.exe -H "Authorization: Bearer $TOKEN" http://localhost:8081/api/bff/servicios
@@ -84,6 +84,38 @@ Con un token de `cliente`, probar `POST /api/bff/servicios` debería dar
 **403** (solo Admin puede editar el catálogo) — esa es la prueba de que las
 reglas de rol están donde corresponde: en el BFF, no en cada microservicio.
 
+## Nuevo (EP2): proxy de administración de RabbitMQ
+
+El BFF reenvía hacia `ms-rutaexpress-rabbit-admin` (URL en `RABBIT_ADMIN_URL`, por
+defecto `http://localhost:8084`). **Toda** la ruta `/api/bff/admin/**` de este
+controlador exige rol `Admin` (`@PreAuthorize` a nivel de clase); cualquier otro rol
+recibe **403** sin que la llamada llegue al microservicio, y sin token, **401**.
+
+| Método | Ruta del BFF | Reenvía a |
+|---|---|---|
+| POST | `/api/bff/admin/queues` | `POST /queues` |
+| GET | `/api/bff/admin/queues/{name}` | `GET /queues/{name}` |
+| DELETE | `/api/bff/admin/queues/{name}` | `DELETE /queues/{name}` |
+| POST | `/api/bff/admin/exchanges` | `POST /exchanges` |
+| DELETE | `/api/bff/admin/exchanges/{name}` | `DELETE /exchanges/{name}` |
+| POST | `/api/bff/admin/bindings` | `POST /bindings` |
+| DELETE | `/api/bff/admin/bindings?exchange=&cola=&routingKey=` | `DELETE /bindings` |
+
+Los errores del administrador (400 de validación con su mensaje claro, 404, 409, 503) se
+reenvían tal cual; el frontend los muestra sin transformarlos.
+
+```bash
+# Con un token de Admin: crea una cola
+curl -i -X POST http://localhost:8081/api/bff/admin/queues \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"nombre":"q.demo","ttlMs":60000,"maxLength":100}'
+
+# Con un token de Despachador o Cliente: 403.
+# Con nombre vacío (token Admin): 400 con {"campos":{"nombre":"El nombre de la cola es obligatorio"}}
+curl -i -X POST http://localhost:8081/api/bff/admin/queues \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"nombre":""}'
+```
+
 ## Pruebas automatizadas
 
 ```bash
@@ -92,3 +124,5 @@ mvn test
 
 `PingControllerTest` simula JWTs con distintos roles (sin depender de Azure
 AD real) para verificar que la autorización por rol funciona.
+`RabbitAdminProxyControllerTest` comprueba que la ruta de administración rechaza
+sin token (401) y a cualquier rol que no sea Admin (403), y que Admin sí pasa.
