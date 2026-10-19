@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -24,21 +25,21 @@ class PingControllerTest {
     @Test
     void adminPuedeEntrarAEndpointDeAdmin() throws Exception {
         mockMvc.perform(get("/api/bff/admin/ping")
-                        .with(jwt().jwt(j -> j.claim("roles", java.util.List.of("Admin")))))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_Admin"))))
                 .andExpect(status().isOk());
     }
 
     @Test
     void despachadorNoPuedeEntrarAEndpointDeAdmin() throws Exception {
         mockMvc.perform(get("/api/bff/admin/ping")
-                        .with(jwt().jwt(j -> j.claim("roles", java.util.List.of("Despachador")))))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_Despachador"))))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void despachadorPuedeEntrarAEndpointDeDespachador() throws Exception {
         mockMvc.perform(get("/api/bff/despachador/ping")
-                        .with(jwt().jwt(j -> j.claim("roles", java.util.List.of("Despachador")))))
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_Despachador"))))
                 .andExpect(status().isOk());
     }
 
