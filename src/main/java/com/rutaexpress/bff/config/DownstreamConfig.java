@@ -22,6 +22,9 @@ public class DownstreamConfig {
     @Value("${rutaexpress.downstream.rabbit-admin-url}")
     private String rabbitAdminUrl;
 
+    @Value("${rutaexpress.downstream.kafka-admin-url}")
+    private String kafkaAdminUrl;
+
     @Bean
     public RestClient shipmentsClient() {
         return RestClient.builder().baseUrl(shipmentsUrl).build();
@@ -35,5 +38,10 @@ public class DownstreamConfig {
     @Bean
     public RestClient rabbitAdminClient() {
         return RestClient.builder().baseUrl(rabbitAdminUrl).build();
+    }
+
+    @Bean
+    public RestClient kafkaAdminClient() {
+        return RestClient.builder().baseUrl(kafkaAdminUrl).build();
     }
 }

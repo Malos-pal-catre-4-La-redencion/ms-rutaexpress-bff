@@ -7,6 +7,7 @@
 #   SHIPMENTS_URL        URL base de ms-rutaexpress-shipments
 #   CATALOG_URL          URL base de ms-rutaexpress-catalog
 #   RABBIT_ADMIN_URL     URL base de ms-rutaexpress-rabbit-admin
+#   KAFKA_ADMIN_URL      URL base de ms-rutaexpress-kafka-admin
 # Los valores por defecto de abajo son los de este proyecto — se puede correr
 # tal cual en local sin exportar nada. En EC2, sobreescribe con -D o con un .env.
 # ============================================================================
@@ -32,6 +33,7 @@ rutaexpress:
     shipments-url: ${SHIPMENTS_URL:http://localhost:8082}
     catalog-url: ${CATALOG_URL:http://localhost:8083}
     rabbit-admin-url: ${RABBIT_ADMIN_URL:http://localhost:8084}
+    kafka-admin-url: ${KAFKA_ADMIN_URL:http://localhost:8085}
 
 logging:
   level:
